@@ -46,7 +46,6 @@ const userSchema = new Schema<IUser>(
 		refreshToken: {
 			type: String,
 			default: null,
-			required: [true, "refresh token is required"],
 		},
 	},
 	{ timestamps: true }

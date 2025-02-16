@@ -28,6 +28,18 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 
+// import router
+import userRouter from "./routes/user.route.js"
+
+
+
+
+
+
+// using the routes
+app.use("/api/v1/user" , userRouter)
+
+
 app.use(handleError)
 const port = process.env.PORT || 8001 || 8002;
 app.listen(port, () => {

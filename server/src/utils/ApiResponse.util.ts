@@ -1,11 +1,10 @@
 class ApiResponse {
-	success = true;
 	constructor(
 		public statusCode: number,
+		public success: boolean,
 		public message: string,
-		public data: any
+		public data: any = ""
 	) {}
 }
 
-
-export default ApiResponse
+export default ApiResponse;
