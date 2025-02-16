@@ -11,7 +11,7 @@ import UserModel from "../models/user.model.js";
 const authenticate = asyncHandler(
 	async (req: AuthenticatedRequest, Response: Response, next: NextFunction) => {
 		const token =
-			req.cookies?.token || req.header("Authorization")?.split(" ")[1];
+			req.cookies?.accessToken || req.header("Authorization")?.split(" ")[1];
 		if (!token) {
 			return next(new ApiError(400, "Unauthorized , no access token"));
 		}
@@ -19,13 +19,14 @@ const authenticate = asyncHandler(
 		const user = jwt.verify(token, String(process.env.ACCESS_TOKEN_SECRET));
 
 		if (!user || typeof user === "string") {
-			return next(new ApiError(400, "Unauthorized  access token "));
+			return next(new ApiError(400, "Unauthorized  access token xxx"));
 		}
+		console.log("decoded : ", user);
 		const userId = user?._id;
 
 		const dbUser = await UserModel.findById(userId);
 		if (!dbUser) {
-			return next(new ApiError(400, "Unauthorized  access token "));
+			return next(new ApiError(400, "Unauthorized  access token yyy"));
 		}
 
 		req.user = dbUser;

@@ -8,10 +8,13 @@ export interface IUser extends Document {
 	password: string;
 	fullname: string;
 	email: string;
+	role : "user" | "admin",
 	firstname: string;
 	refreshToken: string;
-	comparePassword(password: string): Promise<boolean>;
+	comparePassword(password: string, dbPassword: string): Promise<boolean>;
 	changePassword(prevPassword: string): void;
+	generateAccessToken(): string;
+	generateRefreshToken(): string;
 }
 
 const userSchema = new Schema<IUser>(
@@ -27,13 +30,19 @@ const userSchema = new Schema<IUser>(
 			type: String,
 			required: [true, "username is required"],
 			trim: true,
-			select: false,
+			select: false
 		},
 		fullname: {
 			type: String,
 			required: [true, "fullname is required"],
 			trim: true,
 			lowercase: true,
+		},
+		role: {
+			type: String,
+			required: true,
+			enum: ["user", "admin"],
+			default : "user"
 		},
 		email: {
 			type: String,
@@ -45,7 +54,7 @@ const userSchema = new Schema<IUser>(
 		},
 		refreshToken: {
 			type: String,
-			default: null,
+			default: "",
 		},
 	},
 	{ timestamps: true }
@@ -59,9 +68,10 @@ userSchema.pre("save", async function (this: IUser, next) {
 });
 
 userSchema.methods.comparePassword = function (
-	password: string
+	password: string,
+	dbPassword: string
 ): Promise<boolean> {
-	return bcrypt.compare(password, this.password);
+	return bcrypt.compare(password, dbPassword);
 };
 
 userSchema.methods.changePassword = function (
@@ -76,7 +86,7 @@ userSchema.methods.generateAccessToken = function (this: IUser) {
 		throw new Error("Missing ACCESS_TOKEN_SECRET");
 	}
 	return jwt.sign(
-		{ userId: this._id, email: this.email },
+		{ _id: this._id, email: this.email },
 		String(process.env.ACCESS_TOKEN_SECRET),
 		{
 			expiresIn: "1d",
