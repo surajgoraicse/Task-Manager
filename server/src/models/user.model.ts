@@ -1,12 +1,15 @@
 import mongoose, { Document, model, Model, Schema } from "mongoose";
 import bcrypt from "bcryptjs";
+import asyncHandler from "../utils/asyncHandler.utils.js";
+import jwt from "jsonwebtoken";
 
-interface IUser extends Document {
+export interface IUser extends Document {
 	username: string;
 	password: string;
 	fullname: string;
 	email: string;
 	firstname: string;
+	refreshToken: string;
 	comparePassword(password: string): Promise<boolean>;
 	changePassword(prevPassword: string): void;
 }
@@ -40,6 +43,11 @@ const userSchema = new Schema<IUser>(
 			unique: [true, "email has to be unique "],
 			match: [/^[\w.-]+@[\w.-]+\.[a-z]{2,4}$/, "Invalid email"],
 		},
+		refreshToken: {
+			type: String,
+			default: null,
+			required: [true, "refresh token is required"],
+		},
 	},
 	{ timestamps: true }
 );
@@ -62,6 +70,31 @@ userSchema.methods.changePassword = function (
 	prevPassword: string
 ) {
 	this.password = prevPassword;
+};
+
+userSchema.methods.generateAccessToken = function (this: IUser) {
+	if (!process.env.ACCESS_TOKEN_SECRET) {
+		throw new Error("Missing ACCESS_TOKEN_SECRET");
+	}
+	return jwt.sign(
+		{ userId: this._id, email: this.email },
+		String(process.env.ACCESS_TOKEN_SECRET),
+		{
+			expiresIn: "1d",
+		}
+	);
+};
+userSchema.methods.generateRefreshToken = function (this: IUser) {
+	if (!process.env.REFRESH_TOKEN_SECRET) {
+		throw new Error("Missing REFRESH_TOKEN_SECRET .");
+	}
+	return jwt.sign(
+		{ userId: this._id, email: this.email },
+		String(process.env.REFRESH_TOKEN_SECRET),
+		{
+			expiresIn: "10d",
+		}
+	);
 };
 
 userSchema.virtual("firstname").get(function (this: IUser): string {
