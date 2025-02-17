@@ -7,11 +7,8 @@ import UserModel, { IUser } from "../models/user.model.js";
 import ApiResponse from "../utils/ApiResponse.util.js";
 import { cookieOptions } from "../utils/constants.js";
 
-// refresh token
-// create account
-// login
-// logout
-//
+
+// NOTE: authenticated req object contains user model
 
 const generateToken = async (user: IUser) => {
 	try {
@@ -76,7 +73,7 @@ export const registerUser = asyncHandler(
 	}
 );
 
-// authenticated req object contains user model
+
 export const loginUser = asyncHandler(
 	async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 		// take data from body
@@ -140,3 +137,5 @@ export const logout = asyncHandler(
 			.json(new ApiResponse(200, true, "user logout successfully"));
 	}
 );
+
+

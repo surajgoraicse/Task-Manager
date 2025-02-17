@@ -12,35 +12,31 @@ connectDb(process.env.MONGODB_URI!);
 const app = express();
 app.use(express.urlencoded({ limit: "100kb" }));
 app.use(express.json({ limit: "100kb" }));
-app.use(cors({
-	origin: process.env.CORS_ORIGIN,
-	credentials: true
-}));
+app.use(
+	cors({
+		origin: process.env.CORS_ORIGIN,
+		credentials: true,
+	})
+);
 app.use(cookieParser());
 app.on("error", (err) => {
 	console.log("express error : ", err);
-})
-app.use(morgan("dev"))
-
+});
+app.use(morgan("dev"));
 
 app.get("/", (req: Request, res: Response) => {
 	res.send("<h1> hello worlld<h1/>");
 });
 
-
 // import router
-import userRouter from "./routes/user.route.js"
-
-
-
-
-
+import userRouter from "./routes/user.route.js";
+import categoryRouter from "./routes/category.route.js";
 
 // using the routes
-app.use("/api/v1/user" , userRouter)
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/category", categoryRouter);
 
-
-app.use(handleError)
+app.use(handleError);
 const port = process.env.PORT || 8001 || 8002;
 app.listen(port, () => {
 	console.log("app is listening at port : ", port);

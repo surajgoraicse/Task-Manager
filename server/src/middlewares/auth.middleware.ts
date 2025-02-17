@@ -21,7 +21,6 @@ const authenticate = asyncHandler(
 		if (!user || typeof user === "string") {
 			return next(new ApiError(400, "Unauthorized  access token xxx"));
 		}
-		console.log("decoded : ", user);
 		const userId = user?._id;
 
 		const dbUser = await UserModel.findById(userId);
