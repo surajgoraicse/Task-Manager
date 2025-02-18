@@ -32,13 +32,13 @@ app.get("/", (req: Request, res: Response) => {
 import userRouter from "./routes/user.route.js";
 import categoryRouter from "./routes/category.route.js";
 import subjectRouter from "./routes/subject.route.js"
-import taskRouter from "./routes/task.router.js"
+import tasksRouter from "./routes/task.router.js"
 
 // using the routes
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/category", categoryRouter);
 app.use("/api/v1/subject", subjectRouter);
-app.use("/api/v1/task", taskRouter);
+app.use("/api/v1/tasks", tasksRouter);
 
 app.use(handleError);
 const port = process.env.PORT || 8001 || 8002;

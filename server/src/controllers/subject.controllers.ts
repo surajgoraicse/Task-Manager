@@ -87,3 +87,6 @@ export const createSubject = asyncHandler(
 			);
 	}
 );
+
+
+export const deleteSubject = asyncHandler(async ()=>{})

@@ -9,6 +9,7 @@ import {
 import categoryModel from "../models/category.model.js";
 import SubjectModel from "../models/subject.model.js";
 import TaskModel from "../models/task.model.js";
+import mongoose, { mongo } from "mongoose";
 
 export const createTask = asyncHandler(
 	async (req: AuthenticatedRequest, res: Response) => {
@@ -29,7 +30,7 @@ export const createTask = asyncHandler(
 		if (!category || !subject || !title) {
 			return res
 				.status(400)
-				.json(new ApiResponse(400, false, "Send data of the task"));
+				.json(new ApiResponse(400, false, "Send data of the task."));
 		}
 
 		const validateTitle = titleValidation.safeParse(title);
@@ -80,3 +81,41 @@ export const createTask = asyncHandler(
 			.json(new ApiResponse(201, true, "task created successfully"));
 	}
 );
+export const deleteTask = asyncHandler(
+	async (req: AuthenticatedRequest, res: Response) => {
+		const taskId = req.params?.id;
+		if (!taskId || !mongoose.Types.ObjectId.isValid(taskId)) {
+			return res
+				.status(400)
+				.json(
+					new ApiResponse(400, false, "invalid task id, pass a valid type id")
+				);
+		}
+		const task = await TaskModel.findById(taskId);
+		if (!task || task.isCompleted == false) {
+			const message =
+				task?.isCompleted == false
+					? "cannot delete an incomplete task"
+					: "task does not exist";
+			return res.status(400).json(new ApiResponse(400, false, message));
+		}
+		const deleteTask = await TaskModel.findOneAndDelete({ _id: taskId });
+		if (!deleteTask) {
+			return res
+				.status(500)
+				.json(
+					new ApiResponse(
+						500,
+						false,
+						"task deletion failed due to server error"
+					)
+				);
+		}
+		res
+			.status(200)
+			.json(
+				new ApiResponse(200, true, "task deleted successfully", deleteTask)
+			);
+	}
+);
+export const toggleIsCompleted = asyncHandler(async () => {});
