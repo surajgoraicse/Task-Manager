@@ -1,20 +1,23 @@
 import mongoose, { Document, Schema, model } from "mongoose";
 
 interface ITask extends Document {
-	user: Schema.Types.ObjectId;
+	createdBy: Schema.Types.ObjectId;
 	category: Schema.Types.ObjectId;
 	subject: Schema.Types.ObjectId;
 	title: string;
 	isCompleted: boolean;
 	description: string;
+	priority: "low" | "medium" | "high";
+	dueDate: Date;
 }
 
 const taskSchema = new Schema<ITask>(
 	{
-		user: {
+		createdBy: {
 			type: Schema.Types.ObjectId,
 			ref: "User",
 			required: true,
+			index: true
 		},
 		category: {
 			type: Schema.Types.ObjectId,
@@ -46,9 +49,24 @@ const taskSchema = new Schema<ITask>(
 			required: true,
 			default: false,
 		},
+		priority: {
+			type: String,
+			required: true,
+			enum: ["low", "medium", "high"],
+			default: "medium",
+		},
+		dueDate: {
+			type: Date,
+			required: true,
+			default: () => {
+				const tomorrow = new Date();
+				tomorrow.setDate(tomorrow.getDate() + 1);
+				return tomorrow;
+			},
+		},
 	},
 	{ timestamps: true }
 );
 
-const taskModel = model<ITask>("Task", taskSchema);
-export default taskModel
+const TaskModel = model<ITask>("Task", taskSchema);
+export default TaskModel;

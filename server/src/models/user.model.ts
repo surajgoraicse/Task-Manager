@@ -8,7 +8,7 @@ export interface IUser extends Document {
 	password: string;
 	fullname: string;
 	email: string;
-	role : "user" | "admin",
+	role: "user" | "admin";
 	firstname: string;
 	refreshToken: string;
 	comparePassword(password: string, dbPassword: string): Promise<boolean>;
@@ -25,12 +25,13 @@ const userSchema = new Schema<IUser>(
 			lowercase: true,
 			unique: [true, "username has to be unique "],
 			trim: true,
+
 		},
 		password: {
 			type: String,
 			required: [true, "username is required"],
 			trim: true,
-			select: false
+			select: false,
 		},
 		fullname: {
 			type: String,
@@ -42,7 +43,7 @@ const userSchema = new Schema<IUser>(
 			type: String,
 			required: true,
 			enum: ["user", "admin"],
-			default : "user"
+			default: "user",
 		},
 		email: {
 			type: String,

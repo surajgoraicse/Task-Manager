@@ -13,6 +13,8 @@ const subjectSchema = new Schema<ISubject>(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
 			required: true,
+			index : true
+
 		},
 		category: {
 			type: mongoose.Schema.Types.ObjectId,

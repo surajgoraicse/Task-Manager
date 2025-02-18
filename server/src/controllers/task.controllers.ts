@@ -8,7 +8,7 @@ import {
 } from "../schemas/taskSchema.js";
 import categoryModel from "../models/category.model.js";
 import SubjectModel from "../models/subject.model.js";
-import taskModel from "../models/task.model.js";
+import TaskModel from "../models/task.model.js";
 
 export const createTask = asyncHandler(
 	async (req: AuthenticatedRequest, res: Response) => {
@@ -46,14 +46,18 @@ export const createTask = asyncHandler(
 
 		const checkCategoryDb = await categoryModel.findOne({ name: category });
 		const checkSubjectDb = await SubjectModel.findOne({ name: subject });
-		if (!checkCategoryDb || !checkSubjectDb) {
-			return res
-				.status(400)
-				.json(new ApiResponse(400, false, "category or subject not found"));
+		const checkTitleDb = await TaskModel.findOne({ title });
+
+		if (!checkCategoryDb || !checkSubjectDb || checkTitleDb) {
+			const message =
+				checkCategoryDb && checkSubjectDb
+					? "Title already exist"
+					: "category or subject not found";
+			return res.status(400).json(new ApiResponse(400, false, message));
 		}
 
-		const createTask = await taskModel.create({
-			user: user._id,
+		const createTask = await TaskModel.create({
+			createdBy: user._id,
 			category: checkCategoryDb._id,
 			subject: checkSubjectDb._id,
 			title,

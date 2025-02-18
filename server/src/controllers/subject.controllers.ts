@@ -3,8 +3,8 @@ import asyncHandler from "../utils/asyncHandler.utils.js";
 import { AuthenticatedRequest } from "../utils/types.js";
 import { subjectNameValidation } from "../schemas/subjectSchema.js";
 import ApiResponse from "../utils/ApiResponse.util.js";
-import categoryModel from "../models/task.model.js";
 import SubjectModel from "../models/subject.model.js";
+import categoryModel from "../models/category.model.js";
 
 export const createSubject = asyncHandler(
 	async (req: AuthenticatedRequest, res: Response) => {

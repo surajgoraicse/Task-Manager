@@ -28,6 +28,7 @@ const categorySchema = new Schema<ICategory>(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,
+            index : true
         },
         lastUpdatedSubject: {
             type: mongoose.Schema.Types.ObjectId,
